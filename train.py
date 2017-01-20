@@ -44,12 +44,11 @@ criterion = nn.MSELoss()
 x = [ torch.Tensor(300, 300) ]
 y = [ torch.Tensor(300, 200) ]
 
-for epoch in range(2): # loop over the dataset multiple times
+for epoch in range(100): # loop over the dataset multiple times
     
     running_loss = 0.0
     i = 0
     for inputs, labels in zip(x,y):
-        print(inputs)
         # wrap them in Variable
         inputs, labels = Variable(inputs), Variable(labels)
         
@@ -64,9 +63,9 @@ for epoch in range(2): # loop over the dataset multiple times
         
         # print statistics
         running_loss += loss.data[0]
-        if i % 2000 == 1999: # print every 2000 mini-batches
-            print('[%d, %5d] loss: %.3f' % (epoch+1, i+1, running_loss / 2000))
-            running_loss = 0.0
+        #if i % 2000 == 1999: # print every 2000 mini-batches
+        print('[%d, %5d] loss: %.3f' % (epoch+1, i+1, running_loss / 2000))
+        running_loss = 0.0
         i += 1
 print('Finished Training')
 
