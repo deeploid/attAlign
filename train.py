@@ -13,6 +13,9 @@ import argparse
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.optim as opt
+from torch.autograd import Variable
+import numpy as np
 
 # Reading Arguments
 parser = argparse.ArgumentParser(description='Feature-based Attention Network')
@@ -35,9 +38,39 @@ class FAA(nn.Module):
             num_features *= s
         return num_features
     
-net = FAA()
-net
-      
+att = FAA()
+optimizer = opt.SGD(att.parameters(), lr=0.01)
+criterion = nn.MSELoss()
+x = [ torch.Tensor(300, 300) ]
+y = [ torch.Tensor(300, 200) ]
+
+for epoch in range(2): # loop over the dataset multiple times
+    
+    running_loss = 0.0
+    i = 0
+    for inputs, labels in zip(x,y):
+        print(inputs)
+        # wrap them in Variable
+        inputs, labels = Variable(inputs), Variable(labels)
+        
+        # zero the parameter gradients
+        optimizer.zero_grad()
+        
+        # forward + backward + optimize
+        outputs = att(inputs)
+        loss = criterion(outputs, labels)
+        loss.backward()        
+        optimizer.step()
+        
+        # print statistics
+        running_loss += loss.data[0]
+        if i % 2000 == 1999: # print every 2000 mini-batches
+            print('[%d, %5d] loss: %.3f' % (epoch+1, i+1, running_loss / 2000))
+            running_loss = 0.0
+        i += 1
+print('Finished Training')
+
+
 
 
 
